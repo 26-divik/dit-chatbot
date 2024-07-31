@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot - College Chatbot</title>
+    <link rel="stylesheet" href="../static/style/ChatBot.css">
+    <!-- Using Google Fonts for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="chat-container">
+        <header class="chat-header">
+            <h1>College Chatbot</h1>
+        </header>
+        <div class="chat-area" id="chatArea">
+            <div class="message bot-message">
+                <p>Hello! How can I assist you today?</p>
+                <span class="timestamp">Bot - 10:00 AM</span>
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type a message..." autocomplete="off">
+            <button id="sendButton">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Function to add a message to the chat
+        function addMessage(text, sender) {
+            const messageContainer = document.createElement('div');
+            messageContainer.classList.add('message', sender + '-message');
+
+            // Creating message bubble
+            const messageBubble = document.createElement('div');
+            messageBubble.classList.add('message-bubble');
+            const messageText = document.createElement('p');
+            messageText.textContent = text;
+            messageBubble.appendChild(messageText);
+
+            // Creating timestamp
+            const timestamp = document.createElement('span');
+            timestamp.classList.add('timestamp');
+            const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            timestamp.textContent = `${sender.charAt(0).toUpperCase() + sender.slice(1)} - ${currentTime}`;
+
+            // Append elements to message container
+            messageContainer.appendChild(messageBubble);
+            messageContainer.appendChild(timestamp);
+
+            // Add message container to chat area
+            document.getElementById('chatArea').appendChild(messageContainer);
+
+            // Scroll chat area to the bottom
+            document.getElementById('chatArea').scrollTop = document.getElementById('chatArea').scrollHeight;
+        }
+
+        // Function to send message to backend
+        async function sendMessage(message) {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: message }),
+            });
+            return await response.json();
+        }
+
+        // Handle send button click
+        document.getElementById('sendButton').addEventListener('click', async function() {
+            const userInput = document.getElementById('userInput').value;
+            if (userInput.trim() !== '') {
+                addMessage(userInput, 'user');
+                document.getElementById('userInput').value = '';
+
+                // Send message to backend and get response
+                const botResponse = await sendMessage(userInput);
+                addMessage(botResponse.response, 'bot');
+            }
+        });
+
+        // Optional: Send message on Enter key press
+        document.getElementById('userInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                document.getElementById('sendButton').click();
+            }
+        });
+    </script>
+</body>
+
+</html>

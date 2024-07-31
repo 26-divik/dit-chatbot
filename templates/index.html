@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - College Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/Login.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='assets/kk-1654079195.jpg') }}" type="image/x-icon">
+</head>
+<body>
+    <div class="login-container">
+        <img src="{{ url_for('static', filename='assets/kk-1654079195.jpg') }}" alt="College Logo" class="college-logo">
+        <h1>Welcome to College Chatbot</h1>
+        <form id="loginForm" action="{{ url_for('login') }}" method="post">
+            <input type="text" id="userId" name="userId" placeholder="Enter your ID" class="login-input" required>
+            <button type="submit" id="loginButton" class="login-button" disabled>Login</button>
+        </form>
+    </div>
+
+    <script>
+        const userIdInput = document.getElementById('userId');
+        const loginButton = document.getElementById('loginButton');
+
+        // Enable login button only if ID is entered
+        userIdInput.addEventListener('input', function() {
+            loginButton.disabled = userIdInput.value.trim() === '';
+        });
+
+        // Form submission is handled by the browser
+    </script>
+</body>
+</html>
